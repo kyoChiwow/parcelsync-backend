@@ -3,6 +3,8 @@ import cors from "cors";
 import express, { Request, Response } from "express";
 import expressSession from "express-session";
 import { envVars } from "./app/config/env";
+import { globalErrorHandler } from "./app/middlewares/globalErrorhandlers";
+import notFound from "./app/middlewares/notFound";
 
 const app = express();
 app.set("trust proxy", 1);
@@ -25,5 +27,8 @@ app.get("/", (req: Request, res: Response) => {
         message: "Welcome to Parcelsync Parcel Manamgement System!",
     })
 })
+
+app.use(globalErrorHandler);
+app.use(notFound);
 
 export default app;
