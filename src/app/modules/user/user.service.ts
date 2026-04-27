@@ -11,11 +11,10 @@ const createUserService = async (payload: Partial<IUser>) => {
   const { email, password, ...rest } = payload;
 
   const session = await User.startSession();
+  session.startTransaction();
 
   try {
-    session.startTransaction();
-
-    const isUserExist = await User.findOne({ email });
+    const isUserExist = await User.findOne({ email }).session(session);
     if (isUserExist) {
       throw new AppError(httpStatus.BAD_REQUEST, "User already exist");
     }
@@ -30,23 +29,25 @@ const createUserService = async (payload: Partial<IUser>) => {
       providerId: email as string,
     };
 
-    const user = await User.create({
+    const [user] = await User.create([{
       email,
       password: hashedPassword,
       auths: [authProvider],
       ...rest,
-    });
+    }], { session });
 
-    await OtpServices.sendOTPService(user.email, user.name);
+    await OtpServices.sendOTPService(user.email, user.name, session);
 
     await session.commitTransaction();
+    await session.endSession();
+
     return user;
   } catch (error: any) {
     await session.abortTransaction();
-    throw new AppError(500, "Something went wrong!", error);
-  } finally {
     await session.endSession();
-  }
+
+    throw new AppError(500, "Something went wrong!", error);
+  } 
 };
 
 export const UserServices = {

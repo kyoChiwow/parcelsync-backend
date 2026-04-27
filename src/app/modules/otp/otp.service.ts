@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { ClientSession } from "mongoose";
 import { redisClient } from "../../config/redis.config";
 import AppError from "../../errorHelpers/appError";
 import { sendEmail } from "../../utils/sendEmail";
@@ -11,8 +12,12 @@ const generateOTP = (length = 6) => {
   return otp;
 };
 
-const sendOTPService = async (email: string, name: string) => {
-  const user = await User.findOne({ email });
+const sendOTPService = async (
+  email: string,
+  name: string,
+  session?: ClientSession,
+) => {
+  const user = await User.findOne({ email }).session(session as ClientSession);
 
   if (!user) {
     throw new AppError(401, "User not found!");
