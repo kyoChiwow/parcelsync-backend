@@ -3,9 +3,11 @@ import cors from "cors";
 import express, { Request, Response } from "express";
 import expressSession from "express-session";
 import { envVars } from "./app/config/env";
+import "./app/config/passport";
 import { globalErrorHandler } from "./app/middlewares/globalErrorhandlers";
 import notFound from "./app/middlewares/notFound";
 import { router } from "./app/routes";
+import passport from "passport";
 
 const app = express();
 app.set("trust proxy", 1);
@@ -22,6 +24,8 @@ app.use(cookieParser());
 app.use(
   expressSession({ secret: "secret", resave: false, saveUninitialized: false }),
 );
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/api/v1", router);
 
