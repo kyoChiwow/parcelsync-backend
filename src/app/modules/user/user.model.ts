@@ -16,7 +16,7 @@ const authProviderSchema = new Schema<IAuthProvider>(
   {
     _id: false,
     versionKey: false,
-  }
+  },
 );
 
 const userSchema = new Schema<IUser>(
@@ -33,7 +33,6 @@ const userSchema = new Schema<IUser>(
 
     password: {
       type: String,
-      select: false,
     },
 
     phone: { type: String },
@@ -73,7 +72,7 @@ const userSchema = new Schema<IUser>(
   {
     timestamps: true,
     versionKey: false,
-  }
+  },
 );
 
 export const User = model<IUser>("User", userSchema);
