@@ -5,6 +5,7 @@ import expressSession from "express-session";
 import { envVars } from "./app/config/env";
 import { globalErrorHandler } from "./app/middlewares/globalErrorhandlers";
 import notFound from "./app/middlewares/notFound";
+import { router } from "./app/routes";
 
 const app = express();
 app.set("trust proxy", 1);
@@ -21,6 +22,8 @@ app.use(cookieParser());
 app.use(
   expressSession({ secret: "secret", resave: false, saveUninitialized: false }),
 );
+
+app.use("/api/v1", router);
 
 app.get("/", (req: Request, res: Response) => {
     res.status(200).json({
