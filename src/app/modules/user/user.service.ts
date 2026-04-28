@@ -1,10 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import bcryptjs from "bcryptjs";
 import httpStatus from "http-status-codes";
+import { JwtPayload } from "jsonwebtoken";
 import { envVars } from "../../config/env";
 import AppError from "../../errorHelpers/appError";
+import { QueryBuilder } from "../../utils/queryBuilder";
 import { OtpServices } from "../otp/otp.service";
-import { IAuthProvider, IUser } from "./user.interface";
+import { userSearchableFields } from "./user.constant";
+import { IAuthProvider, IUser, Role } from "./user.interface";
 import { User } from "./user.model";
 
 const createUserService = async (payload: Partial<IUser>) => {
@@ -29,12 +32,17 @@ const createUserService = async (payload: Partial<IUser>) => {
       providerId: email as string,
     };
 
-    const [user] = await User.create([{
-      email,
-      password: hashedPassword,
-      auths: [authProvider],
-      ...rest,
-    }], { session });
+    const [user] = await User.create(
+      [
+        {
+          email,
+          password: hashedPassword,
+          auths: [authProvider],
+          ...rest,
+        },
+      ],
+      { session },
+    );
 
     await OtpServices.sendOTPService(user.email, user.name, session);
 
@@ -47,9 +55,104 @@ const createUserService = async (payload: Partial<IUser>) => {
     await session.endSession();
 
     throw new AppError(500, "Something went wrong!", error);
-  } 
+  }
 };
+
+const getAllUsersService = async (query: Record<string, string>) => {
+  const queryBuilder = new QueryBuilder(User.find(), query);
+
+  const users = await queryBuilder
+    .filter()
+    .search(userSearchableFields)
+    .sort()
+    .fields()
+    .paginate();
+
+  const [data, meta] = await Promise.all([users.build(), users.getMeta()]);
+
+  return { data, meta };
+};
+
+const updateUserService = async (
+  userId: string,
+  payload: Partial<IUser>,
+  decodedToken: JwtPayload,
+) => {
+  if (
+    decodedToken.role === Role.USER ||
+    decodedToken.role === Role.COMPANY ||
+    decodedToken.role === Role.DELIVERY_AGENT
+  ) {
+    if (userId !== decodedToken.userId) {
+      throw new AppError(httpStatus.FORBIDDEN, "You are not authorized!");
+    }
+  }
+
+  const ifUserExists = await User.findById(userId);
+  if (!ifUserExists) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not found!");
+  }
+
+  if (
+    decodedToken.role === Role.ADMIN &&
+    ifUserExists.role.includes(Role.SUPER_ADMIN)
+  ) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "Admins cannot change the role of super admins!",
+    );
+  }
+
+  if (payload.role) {
+    if (
+      decodedToken.role === Role.USER ||
+      decodedToken.role === Role.COMPANY ||
+      decodedToken.role === Role.DELIVERY_AGENT
+    ) {
+      throw new AppError(
+        httpStatus.FORBIDDEN,
+        "You are not authorized to change role!",
+      );
+    }
+  }
+
+  if (payload.isActive || payload.isDeleted || payload.isVerified) {
+    if (
+      decodedToken.role === Role.USER ||
+      decodedToken.role === Role.COMPANY ||
+      decodedToken.role === Role.DELIVERY_AGENT
+    ) {
+      throw new AppError(
+        httpStatus.FORBIDDEN,
+        "You are not authorized to change status!",
+      );
+    }
+  }
+
+  const newUpdatedUser = await User.findByIdAndUpdate(userId, payload, {
+    new: true,
+    runValidators: true,
+  });
+
+  return newUpdatedUser;
+};
+
+const getSingleUserService = async (userId: string) => {
+  const user = await User.findById(userId).select("-password");
+
+  return user;
+}
+
+const getMeService = async (userId: string) => {
+  const user = await User.findById(userId).select("-password");
+
+  return user;
+}
 
 export const UserServices = {
   createUserService,
+  getAllUsersService,
+  updateUserService,
+  getSingleUserService,
+  getMeService,
 };
