@@ -16,6 +16,8 @@ interface EnvConfig {
   REDIS_PORT: string;
   REDIS_USERNAME: string;
   REDIS_PASSWORD: string;
+  SUPER_ADMIN_EMAIL: string;
+  SUPER_ADMIN_PASSWORD: string;
   EMAIL_SENDER: {
     SMTP_USER: string;
     SMTP_PASS: string;
@@ -45,6 +47,8 @@ const loadEnvironmentVariables = (): EnvConfig => {
     "SMTP_PORT",
     "SMTP_HOST",
     "SMTP_FROM",
+    "SUPER_ADMIN_EMAIL",
+    "SUPER_ADMIN_PASSWORD",
   ];
   requiredEnvVars.forEach((key) => {
     if (!process.env[key]) {
@@ -65,6 +69,8 @@ const loadEnvironmentVariables = (): EnvConfig => {
     REDIS_PORT: process.env.REDIS_PORT as string,
     REDIS_USERNAME: process.env.REDIS_USERNAME as string,
     REDIS_PASSWORD: process.env.REDIS_PASSWORD as string,
+    SUPER_ADMIN_EMAIL: process.env.SUPER_ADMIN_EMAIL as string,
+    SUPER_ADMIN_PASSWORD: process.env.SUPER_ADMIN_PASSWORD as string,
     EMAIL_SENDER: {
       SMTP_USER: process.env.SMTP_USER as string,
       SMTP_PASS: process.env.SMTP_PASS as string,
