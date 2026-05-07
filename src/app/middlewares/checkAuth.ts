@@ -11,7 +11,6 @@ export const checkAuth =
   (...authRoles: string[]) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      
       const accessToken = req.headers.authorization || req.cookies.accessToken;
 
       if (!accessToken) {
@@ -51,8 +50,13 @@ export const checkAuth =
         throw new AppError(httpStatus.BAD_REQUEST, "User is deleted!");
       }
 
+      console.log("User Roles from Token:", verifiedToken.role);
+      console.log("Required Roles for Route:", authRoles);
+
       const userRoles = verifiedToken.role;
-      const hasPermission = userRoles.some((role: string) => authRoles.includes(role));
+      const hasPermission = userRoles.some((role: string) =>
+        authRoles.includes(role),
+      );
 
       if (!hasPermission) {
         throw new AppError(httpStatus.FORBIDDEN, "You are not authorized!");
