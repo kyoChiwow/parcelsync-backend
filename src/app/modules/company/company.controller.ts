@@ -36,7 +36,7 @@ const getAllCompany = catchAsync(async (req: Request, res: Response) => {
     data: result.data,
     meta: result.meta
   })
-})
+});
 
 const getSingleCompany = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id;

@@ -24,6 +24,7 @@ const startServer = async () => {
   await connectRedis();
   await startServer();
   await seedSuperAdmin();
+  // await seedGeography();
 })();
 
 // Unhandled rejection error
