@@ -3,6 +3,7 @@ import { AuthRoutes } from "../modules/auth/auth.route";
 import { OtpRoutes } from "../modules/otp/otp.route";
 import { UserRoutes } from "../modules/user/user.route";
 import { CompanyRoutes } from "../modules/company/company.route";
+import { HubRoutes } from "../modules/hub/hub.route";
 
 export const router = Router();
 
@@ -22,6 +23,10 @@ const moduleRoutes = [
   {
     path: "/company",
     route: CompanyRoutes,
+  },
+  {
+    path: "/hub",
+    route: HubRoutes,
   }
 ];
 
