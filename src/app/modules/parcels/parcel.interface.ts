@@ -1,8 +1,12 @@
 import { Types } from "mongoose";
 
+export enum paymentMethod {
+    COD = "COD",
+    PREPAID = "PREPAID",
+}
+
 export interface IParcel {
     _id: string;
-    parcelTypeId?: Types.ObjectId;
     companyId?: Types.ObjectId;
     pickupHubId?: Types.ObjectId;
     deiveryHubId?: Types.ObjectId;
@@ -11,5 +15,5 @@ export interface IParcel {
     totalCost?: number;
     pickUpAddress?: string;
     deliveryAddress?: string;
-    paymentMethod?: string;
+    paymentMethod?: paymentMethod;
 }
