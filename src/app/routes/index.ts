@@ -5,6 +5,7 @@ import { UserRoutes } from "../modules/user/user.route";
 import { CompanyRoutes } from "../modules/company/company.route";
 import { HubRoutes } from "../modules/hub/hub.route";
 import { ParcelRoutes } from "../modules/parcels/parcel.route";
+import { AdminRoutes } from "../modules/admin/admin.route";
 
 export const router = Router();
 
@@ -32,6 +33,10 @@ const moduleRoutes = [
   {
     path: "/parcel",
     route: ParcelRoutes,
+  },
+  {
+    path: "/admin",
+    route: AdminRoutes,
   }
 ];
 

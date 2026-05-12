@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { ICompany } from "./company.interface";
+import { CompanyStatus, ICompany } from "./company.interface";
 
 const companySchema = new Schema<ICompany>(
   {
@@ -7,7 +7,11 @@ const companySchema = new Schema<ICompany>(
     companyName: { type: String, required: true },
     address: { type: String, required: true },
     tradeLisence: { type: String },
-    isApproved: { type: Boolean, default: false },
+    isApproved: {
+      type: String,
+      enum: Object.values(CompanyStatus),
+      default: CompanyStatus.PENDING,
+    },
   },
   {
     timestamps: true,
