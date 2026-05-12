@@ -13,7 +13,7 @@ const parcelHistorySchema = new Schema<IParcelHistory>(
   { timestamps: true, versionKey: false },
 );
 
-export const Parcel = model<IParcelHistory>(
+export const ParcelHistory = model<IParcelHistory>(
   "ParcelHistory",
   parcelHistorySchema,
 );
