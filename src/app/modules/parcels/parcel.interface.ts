@@ -10,6 +10,7 @@ export interface IParcel {
     companyId?: Types.ObjectId;
     pickupHubId?: Types.ObjectId;
     deliveryHubId?: Types.ObjectId;
+    userId?: Types.ObjectId;
     weight?: number;
     deliveryCharge?: number;
     totalCost?: number;
