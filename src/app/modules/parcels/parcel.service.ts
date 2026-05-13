@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from "http-status-codes";
 import AppError from "../../errorHelpers/appError";
 import { QueryBuilder } from "../../utils/queryBuilder";
@@ -7,6 +8,8 @@ import { ParcelStatus } from "../parcelHistory/parcelHistory.interface";
 import { ParcelHistory } from "../parcelHistory/parcelHistory.model";
 import { IParcel } from "./parcel.interface";
 import { Parcel } from "./parcel.model";
+import { JwtPayload } from "jsonwebtoken";
+import { Role } from "../user/user.interface";
 
 const createParcelService = async (payload: Partial<IParcel>) => {
   const session = await Parcel.startSession();
@@ -72,14 +75,33 @@ const getAllParcelService = async (query: Record<string, string>) => {
   return { data, meta };
 };
 
-const getSingleParcelService = async (id: string) => {
-  const parcel = await Parcel.findById(id);
+const getSingleParcelService = async (parcelId: string, user: JwtPayload) => {
+  const { userId, role } = user;
+  console.log(userId, role)
 
-  return parcel;
+  const query: any = { _id: parcelId };
+  const adminRoles = [Role.ADMIN, Role.SUPER_ADMIN];
+  const isAdmin = role.some((r: any) => adminRoles.includes(r));
+  if (!isAdmin) {
+    query.userId = userId;
+  }
+
+  const result = await Parcel.findOne(query);
+  if (!result) {
+    throw new AppError(httpStatus.NOT_FOUND, "Parcel not found");
+  }
+
+  return result;
 };
+
+const getUserParcelService = async (userId: string) => {
+  const result = await Parcel.find({ userId });
+  return result;
+}
 
 export const ParcelServices = {
   createParcelService,
   getAllParcelService,
   getSingleParcelService,
+  getUserParcelService,
 };
