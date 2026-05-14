@@ -7,6 +7,9 @@ import {
   DeliveryManStatus,
 } from "../deliveryMan/deliveryMan.interface";
 import { DeliveryMan } from "../deliveryMan/deliveryMan.model";
+import { ParcelStatus } from "../parcelHistory/parcelHistory.interface";
+import { logParcelHistory } from "../parcelHistory/parcelHistory.utils";
+import { Parcel } from "../parcels/parcel.model";
 import { Role } from "../user/user.interface";
 import { User } from "../user/user.model";
 
@@ -94,9 +97,99 @@ const rejectDeliveryManService = async (applicationId: string) => {
   }
 };
 
+const assignPickupHubToParcelService = async (
+  parcelId: string,
+  hubId: string,
+  adminId: string,
+  remarks?: string,
+) => {
+  const session = await Parcel.startSession();
+  session.startTransaction();
+
+  try {
+    const updatedParcel = await Parcel.findByIdAndUpdate(
+      parcelId,
+      {
+        pickupHubId: hubId,
+      },
+      { session, runValidators: true, returnDocument: "after" },
+    );
+
+    if (!updatedParcel) {
+      throw new AppError(httpStatus.NOT_FOUND, "Parcel not found!");
+    }
+
+    await logParcelHistory(
+      {
+        parcelId,
+        status: ParcelStatus.PICKUP_HUB_ASSIGNED,
+        hubId,
+        updatedBy: adminId,
+        remarks,
+      },
+      session,
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return updatedParcel;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
+const assignDeliveryHubToParcelService = async (
+  parcelId: string,
+  hubId: string,
+  hubAdminId: string,
+  remarks?: string,
+) => {
+  const session = await Parcel.startSession();
+  session.startTransaction();
+
+  try {
+    const updatedParcel = await Parcel.findByIdAndUpdate(
+      parcelId,
+      {
+        deliveryHubId: hubId,
+      },
+      { session, runValidators: true, returnDocument: "after" },
+    );
+
+    if (!updatedParcel) {
+      throw new AppError(httpStatus.NOT_FOUND, "Parcel not found!");
+    }
+
+    await logParcelHistory(
+      {
+        parcelId,
+        status: ParcelStatus.DELIVERY_HUB_ASSIGNED,
+        hubId,
+        updatedBy: hubAdminId,
+        remarks,
+      },
+      session,
+    );
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return updatedParcel;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
 export const AdminServices = {
   approveCompanyService,
   rejectCompanyService,
   approveDeliveryManService,
   rejectDeliveryManService,
+  assignPickupHubToParcelService,
+  assignDeliveryHubToParcelService,
 };

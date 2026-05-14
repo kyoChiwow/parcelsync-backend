@@ -6,6 +6,7 @@ import { CompanyRoutes } from "../modules/company/company.route";
 import { HubRoutes } from "../modules/hub/hub.route";
 import { ParcelRoutes } from "../modules/parcels/parcel.route";
 import { AdminRoutes } from "../modules/admin/admin.route";
+import { DeliveryManRoutes } from "../modules/deliveryMan/deliveryMan.route";
 
 export const router = Router();
 
@@ -37,6 +38,10 @@ const moduleRoutes = [
   {
     path: "/admin",
     route: AdminRoutes,
+  },
+  {
+    path: "/delivery-man",
+    route: DeliveryManRoutes,
   }
 ];
 

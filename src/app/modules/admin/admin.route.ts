@@ -9,5 +9,7 @@ router.patch("/approve", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), AdminControlle
 router.patch("/reject", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), AdminController.rejectCompany);
 router.patch("/approve-delivery-man", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), AdminController.approveDeliveryMan);
 router.patch("/reject-delivery-man", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), AdminController.rejectDeliveryMan);
+router.patch("/assign-pickup-hub", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), AdminController.assignPickupHubToParcel);
+router.patch("/assign-delivery-hub", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), AdminController.assignDeliveryHubToParcel);
 
 export const AdminRoutes = router;

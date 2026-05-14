@@ -43,7 +43,13 @@ const createParcelService = async (payload: Partial<IParcel>) => {
       [
         {
           parcelId: parcel._id,
-          status: ParcelStatus.CREATED,
+          timeline: [
+            {
+              status: ParcelStatus.CREATED,
+              remarks: "Parcel has been created!",
+              timeStamp: new Date(),
+            }
+          ]
         },
       ],
       { session },
