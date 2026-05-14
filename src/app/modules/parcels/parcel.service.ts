@@ -77,7 +77,6 @@ const getAllParcelService = async (query: Record<string, string>) => {
 
 const getSingleParcelService = async (parcelId: string, user: JwtPayload) => {
   const { userId, role } = user;
-  console.log(userId, role)
 
   const query: any = { _id: parcelId };
   const adminRoles = [Role.ADMIN, Role.SUPER_ADMIN];
@@ -97,7 +96,7 @@ const getSingleParcelService = async (parcelId: string, user: JwtPayload) => {
 const getUserParcelService = async (userId: string) => {
   const result = await Parcel.find({ userId });
   return result;
-}
+};
 
 export const ParcelServices = {
   createParcelService,
