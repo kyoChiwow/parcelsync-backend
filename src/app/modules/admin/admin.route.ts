@@ -7,5 +7,7 @@ const router = Router();
 
 router.patch("/approve", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), AdminController.approveCompany);
 router.patch("/reject", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), AdminController.rejectCompany);
+router.patch("/approve-delivery-man", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), AdminController.approveDeliveryMan);
+router.patch("/reject-delivery-man", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), AdminController.rejectDeliveryMan);
 
 export const AdminRoutes = router;

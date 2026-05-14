@@ -30,7 +30,35 @@ const rejectCompany = catchAsync(async (req: Request, res: Response) => {
     })
 });
 
+const approveDeliveryMan = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.body;
+
+    const result = await AdminServices.approveDeliveryManService(id);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Delivery man has been approved successfully!",
+        data: result,
+    })
+});
+
+const rejectDeliveryMan = catchAsync(async (req: Request, res: Response) => {
+    const { id } = req.body;
+
+    const result = await AdminServices.rejectDeliveryManService(id);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Delivery man has been rejected successfully!",
+        data: result,
+    })
+});
+
 export const AdminController = {
     approveCompany,
-    rejectCompany
+    rejectCompany,
+    approveDeliveryMan,
+    rejectDeliveryMan
 }
