@@ -10,6 +10,8 @@ const parcelSchema = new Schema<IParcel>(
     weight: { type: Number },
     deliveryCharge: { type: Number },
     totalCost: { type: Number },
+    netCost: { type: Number },
+    collectionAmount: { type: Number },
     pickUpAddress: { type: String },
     deliveryAddress: { type: String },
     paymentMethod: { type: String, enum: Object.values(paymentMethod) },

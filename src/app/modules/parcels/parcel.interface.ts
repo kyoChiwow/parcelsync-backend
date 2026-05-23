@@ -14,6 +14,8 @@ export interface IParcel {
     weight?: number;
     deliveryCharge?: number;
     totalCost?: number;
+    netCost?: number;
+    collectionAmount?: number;
     pickUpAddress?: string;
     deliveryAddress?: string;
     paymentMethod?: paymentMethod;

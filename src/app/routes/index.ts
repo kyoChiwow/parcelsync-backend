@@ -7,6 +7,7 @@ import { HubRoutes } from "../modules/hub/hub.route";
 import { ParcelRoutes } from "../modules/parcels/parcel.route";
 import { AdminRoutes } from "../modules/admin/admin.route";
 import { DeliveryManRoutes } from "../modules/deliveryMan/deliveryMan.route";
+import { LocationRoutes } from "../modules/location/location.route";
 
 export const router = Router();
 
@@ -42,6 +43,10 @@ const moduleRoutes = [
   {
     path: "/delivery-man",
     route: DeliveryManRoutes,
+  },
+  {
+    path: "/location",
+    route: LocationRoutes,
   }
 ];
 
