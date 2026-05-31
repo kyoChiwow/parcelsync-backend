@@ -8,6 +8,7 @@ import { ParcelRoutes } from "../modules/parcels/parcel.route";
 import { AdminRoutes } from "../modules/admin/admin.route";
 import { DeliveryManRoutes } from "../modules/deliveryMan/deliveryMan.route";
 import { LocationRoutes } from "../modules/location/location.route";
+import { ParcelHistoryRoutes } from "../modules/parcelHistory/parcelHistory.route";
 
 export const router = Router();
 
@@ -47,6 +48,10 @@ const moduleRoutes = [
   {
     path: "/location",
     route: LocationRoutes,
+  },
+  {
+    path: "/parcel-history",
+    route: ParcelHistoryRoutes,
   }
 ];
 

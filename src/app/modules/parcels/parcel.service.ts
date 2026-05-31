@@ -104,9 +104,47 @@ const getUserParcelService = async (userId: string) => {
   return result;
 };
 
+const deleteParcelService = async (parcelId: string, user: JwtPayload) => {
+  const { userId, role } = user;
+  const adminRoles = [Role.ADMIN, Role.SUPER_ADMIN];
+  const isAdmin = role.some((r: any) => adminRoles.includes(r));
+
+  const session = await Parcel.startSession();
+  session.startTransaction();
+
+  try {
+    const parcel = await Parcel.findById(parcelId).session(session);
+    
+    if (!parcel) {
+      throw new AppError(httpStatus.NOT_FOUND, "Parcel not found");
+    }
+
+    if (!isAdmin && parcel.userId?.toString() !== userId.toString()) {
+      throw new AppError(
+        httpStatus.FORBIDDEN,
+        "You do not have permission to delete this parcel",
+      );
+    }
+
+    await Parcel.findByIdAndDelete(parcelId).session(session);
+
+    await ParcelHistory.findOneAndDelete({ parcelId }).session(session);
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return null;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
 export const ParcelServices = {
   createParcelService,
   getAllParcelService,
   getSingleParcelService,
   getUserParcelService,
+  deleteParcelService
 };

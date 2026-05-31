@@ -59,9 +59,26 @@ const getUserParcels = catchAsync(async (req: Request, res: Response) => {
   })
 });
 
+const deleteParcel = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  
+  await ParcelServices.deleteParcelService(
+    id as string, 
+    req.user as JwtPayload
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Parcel and its history deleted successfully",
+    data: null,
+  });
+});
+
 export const ParcelController = {
   createParcel,
   getAllParcels,
   getSingleParcel,
-  getUserParcels
+  getUserParcels,
+  deleteParcel
 };

@@ -6,6 +6,7 @@ const parcelSchema = new Schema<IParcel>(
     companyId: { type: Schema.Types.ObjectId, ref: "Company", required: true },
     pickupHubId: { type: Schema.Types.ObjectId, ref: "Hub" },
     deliveryHubId: { type: Schema.Types.ObjectId, ref: "Hub" },
+    division: { type: Schema.Types.ObjectId, ref: "Division" },
     userId: { type: Schema.Types.ObjectId, ref: "User" },
     weight: { type: Number },
     deliveryCharge: { type: Number },

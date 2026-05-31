@@ -22,4 +22,10 @@ router.get(
   ParcelController.getSingleParcel,
 );
 
+router.delete(
+  "/:id",
+  checkAuth(Role.COMPANY, Role.SUPER_ADMIN, Role.ADMIN),
+  ParcelController.deleteParcel,
+);
+
 export const ParcelRoutes = router;
