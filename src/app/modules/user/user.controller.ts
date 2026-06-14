@@ -37,6 +37,17 @@ const getAllUsers = catchAsync(
   },
 );
 
+const getHubAdmins = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserServices.getHubAdminsService();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Hub admins fetched successfully!",
+    data: result,
+  });
+})
+
 const getSingleUser = catchAsync(async (req: Request, res: Response) => {
   const user = req.params.id;
   const result = await UserServices.getSingleUserService(user as string);
@@ -87,4 +98,5 @@ export const UserController = {
   getSingleUser,
   getMe,
   updateUser,
+  getHubAdmins
 };

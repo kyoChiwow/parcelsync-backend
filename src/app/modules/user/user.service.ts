@@ -73,6 +73,12 @@ const getAllUsersService = async (query: Record<string, string>) => {
   return { data, meta };
 };
 
+const getHubAdminsService = async () => {
+  const hubAdmins = await User.find({ role: Role.HUB_ADMIN });
+
+  return hubAdmins;
+}
+
 const updateUserService = async (
   userId: string,
   payload: Partial<IUser>,
@@ -155,4 +161,5 @@ export const UserServices = {
   updateUserService,
   getSingleUserService,
   getMeService,
+  getHubAdminsService
 };
