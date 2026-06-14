@@ -7,7 +7,7 @@ const router = Router();
 
 router.post("/create", checkAuth(Role.USER), CompanyController.createCompany);
 router.get("/get-all", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), CompanyController.getAllCompany);
-router.get("/my-companies", checkAuth(Role.USER, Role.COMPANY), CompanyController.getMyCompanies);
+router.get("/my-companies", checkAuth(Role.USER, Role.COMPANY, Role.SUPER_ADMIN, Role.ADMIN), CompanyController.getMyCompanies);
 router.get("/:id", checkAuth(Role.ADMIN, Role.SUPER_ADMIN), CompanyController.getSingleCompany);
 router.delete("/:id", checkAuth(Role.ADMIN, Role.SUPER_ADMIN, Role.COMPANY), CompanyController.deleteSingleCompany);
 

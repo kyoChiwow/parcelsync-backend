@@ -1,1 +1,1 @@
-export const hubSearchableFields = ["hubName", "divisionId", "districtId", "areaId"];
+export const hubSearchableFields = ["hubName"];
