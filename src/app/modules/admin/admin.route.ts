@@ -35,7 +35,7 @@ router.patch(
   checkAuth(Role.ADMIN, Role.SUPER_ADMIN, Role.HUB_ADMIN),
   AdminController.assignDeliveryHubToParcel,
 );
-router.patch(
+router.post(
   "/hub-admin/create",
   checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
   AdminController.makeHubAdmin,
