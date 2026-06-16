@@ -99,6 +99,38 @@ const assignDeliveryHubToParcel = catchAsync(
   },
 );
 
+const makeHubAdmin = catchAsync(async (req: Request, res: Response) => {
+  const { userId, divisionId, districtId, hubId, phone, address } = req.body;
+
+  const result = await AdminServices.makeHubAdminService( userId, {
+    divisionId,
+    districtId,
+    hubId,
+    phone,
+    address,
+  })
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Hub Admin appointed successfully!",
+    data: result,
+  });
+})
+
+const deleteHubAdmin = catchAsync(async (req: Request, res: Response) => {
+  const { userId } = req.body;
+
+  const result = await AdminServices.deleteHubAdminService(userId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Hub Admin access revoked successfully!",
+    data: result,
+  });
+})
+
 export const AdminController = {
   approveCompany,
   rejectCompany,
@@ -106,4 +138,6 @@ export const AdminController = {
   rejectDeliveryMan,
   assignPickupHubToParcel,
   assignDeliveryHubToParcel,
+  makeHubAdmin,
+  deleteHubAdmin
 };

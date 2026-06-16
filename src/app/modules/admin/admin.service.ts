@@ -12,6 +12,7 @@ import { logParcelHistory } from "../parcelHistory/parcelHistory.utils";
 import { Parcel } from "../parcels/parcel.model";
 import { Role } from "../user/user.interface";
 import { User } from "../user/user.model";
+import { HubAdmin } from "./admin.model";
 
 const updateCompanyStatus = async (id: string, status: CompanyStatus) => {
   const updatedCompany = await Company.findByIdAndUpdate(
@@ -185,6 +186,102 @@ const assignDeliveryHubToParcelService = async (
   }
 };
 
+const makeHubAdminService = async (
+  userId: string,
+  payload: {
+    divisionId: string;
+    districtId: string;
+    hubId: string;
+    phone?: string;
+    address?: string;
+  },
+) => {
+  const session = await User.startSession();
+
+  session.startTransaction();
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        $addToSet: { role: Role.HUB_ADMIN },
+      },
+      { session, runValidators: true, returnDocument: "after" },
+    );
+
+    if (!updatedUser) {
+      throw new AppError(httpStatus.NOT_FOUND, "User not found!");
+    }
+
+    const isHubAdminExist = await HubAdmin.findOne({
+      userId: updatedUser._id,
+    }).session(session);
+
+    if (isHubAdminExist) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "User is already a hub admin!",
+      );
+    }
+
+    const [newHubAdmin] = await HubAdmin.create(
+      [
+        {
+          ...payload,
+          userId: updatedUser._id,
+        },
+      ],
+      { session },
+    );
+
+    await session.commitTransaction();
+
+    return { user: updatedUser, hubAdmin: newHubAdmin };
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    await session.endSession();
+  }
+};
+
+const deleteHubAdminService = async (userId: string) => {
+  const session = await User.startSession();
+  session.startTransaction();
+
+  try {
+    const deletedHubAdmin = await HubAdmin.findOneAndDelete(
+      { userId },
+      { session },
+    );
+
+    if (!deletedHubAdmin) {
+      throw new AppError(httpStatus.NOT_FOUND, "Hub admin not found!");
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        $pull: { role: Role.HUB_ADMIN },
+      },
+      { runValidators: true, returnDocument: "after" },
+    ).session(session);
+
+    if (!updatedUser) {
+      throw new AppError(httpStatus.NOT_FOUND, "User not found!");
+    }
+
+    await session.commitTransaction();
+
+    return { user: updatedUser, hubAdmin: deletedHubAdmin };
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    await session.endSession();
+  }
+};
+
 export const AdminServices = {
   approveCompanyService,
   rejectCompanyService,
@@ -192,4 +289,6 @@ export const AdminServices = {
   rejectDeliveryManService,
   assignPickupHubToParcelService,
   assignDeliveryHubToParcelService,
+  makeHubAdminService,
+  deleteHubAdminService
 };
