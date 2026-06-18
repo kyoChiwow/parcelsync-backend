@@ -3,6 +3,8 @@ import { Types } from "mongoose";
 export interface IHub {
     _id: string;
     hubName: string;
+    hubAddress: string;
+    hubContact: string;
     divisionId: Types.ObjectId;
     districtId: Types.ObjectId;
     areaId: Types.ObjectId;

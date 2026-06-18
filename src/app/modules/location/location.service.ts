@@ -6,7 +6,7 @@ const getAllDivisions = async (query: Record<string, string>) => {
 
     const divisions = await queryBuilder
         .filter()
-        .search([])
+        .search(["name"])
         .sort()
         .fields()
         .paginate();
@@ -24,7 +24,7 @@ const getAllAreas = async (query: Record<string, string>) => {
 
     const areas = await queryBuilder 
         .filter()
-        .search([])
+        .search(["name"])
         .sort()
         .fields()
         .paginate();
@@ -42,7 +42,7 @@ const getAllDistrict = async (query: Record<string, string>) => {
 
     const districts = await queryBuilder
         .filter()
-        .search([])
+        .search(["name"])
         .sort()
         .fields()
         .paginate();

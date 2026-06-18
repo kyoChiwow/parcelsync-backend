@@ -3,6 +3,8 @@ import { IHub } from "./hub.interface";
 
 const hubSchema = new Schema<IHub>({
     hubName: { type: String, required: true },
+    hubAddress: { type: String },
+    hubContact: { type: String },
     divisionId: { type: Schema.Types.ObjectId, ref: "Division", required: true },
     districtId: { type: Schema.Types.ObjectId, ref: "District", required: true },
     areaId: { type: Schema.Types.ObjectId, ref: "Area", required: true },
