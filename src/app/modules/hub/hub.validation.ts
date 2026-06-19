@@ -5,18 +5,18 @@ const objectIdSchema = z.string().refine((val) => mongoose.isValidObjectId(val),
   message: 'Invalid MongoDB ObjectID',
 });
 
-const hubSchemaShape = z.object({
+export const createHubValidationSchema = z.object({
   hubName: z.string().trim(),
   divisionId: objectIdSchema,
   districtId: objectIdSchema,
   areaId: objectIdSchema,
-  hubAdminId: objectIdSchema,
-});
-
-export const createHubValidationSchema = z.object({
-  body: hubSchemaShape,
+  hubAdminId: objectIdSchema.optional(),
 });
 
 export const updateHubValidationSchema = z.object({
-  body: hubSchemaShape.partial(),
+  hubName: z.string().trim().optional(),
+  divisionId: objectIdSchema.optional(),
+  districtId: objectIdSchema.optional(),
+  areaId: objectIdSchema.optional(),
+  hubAdminId: objectIdSchema.optional(),
 });

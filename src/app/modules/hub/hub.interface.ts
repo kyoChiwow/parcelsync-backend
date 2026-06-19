@@ -8,5 +8,5 @@ export interface IHub {
     divisionId: Types.ObjectId;
     districtId: Types.ObjectId;
     areaId: Types.ObjectId;
-    hubAdminId: Types.ObjectId;
+    hubAdminId?: Types.ObjectId;
 }

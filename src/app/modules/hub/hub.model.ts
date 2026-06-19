@@ -8,7 +8,7 @@ const hubSchema = new Schema<IHub>({
     divisionId: { type: Schema.Types.ObjectId, ref: "Division", required: true },
     districtId: { type: Schema.Types.ObjectId, ref: "District", required: true },
     areaId: { type: Schema.Types.ObjectId, ref: "Area", required: true },
-    hubAdminId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    hubAdminId: { type: Schema.Types.ObjectId, ref: "User" },
 })
 
 export const Hub = model<IHub>("Hub", hubSchema);
