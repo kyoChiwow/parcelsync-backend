@@ -20,4 +20,10 @@ router.get(
   HubController.getAllHubs,
 );
 
+router.delete(
+  "/:id",
+  checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+  HubController.deleteSingleHub,
+)
+
 export const HubRoutes = router;
