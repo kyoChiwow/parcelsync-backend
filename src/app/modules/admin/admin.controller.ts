@@ -116,7 +116,7 @@ const makeHubAdmin = catchAsync(async (req: Request, res: Response) => {
     message: "Hub Admin appointed successfully!",
     data: result,
   });
-})
+});
 
 const deleteHubAdmin = catchAsync(async (req: Request, res: Response) => {
   const { userId } = req.body;
@@ -129,6 +129,19 @@ const deleteHubAdmin = catchAsync(async (req: Request, res: Response) => {
     message: "Hub Admin access revoked successfully!",
     data: result,
   });
+});
+
+const getAllHubAdmins = catchAsync(async (req: Request, res: Response) => {
+  const query = req.query;
+  const result = await AdminServices.getAllHubAdminsService(query as Record<string, string>);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Hub Admins retrieved successfully",
+    data: result.data,
+    meta: result.meta,
+  });
 })
 
 export const AdminController = {
@@ -139,5 +152,6 @@ export const AdminController = {
   assignPickupHubToParcel,
   assignDeliveryHubToParcel,
   makeHubAdmin,
-  deleteHubAdmin
+  deleteHubAdmin,
+  getAllHubAdmins
 };

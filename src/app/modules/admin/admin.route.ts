@@ -46,4 +46,10 @@ router.delete(
   AdminController.deleteHubAdmin,
 );
 
+router.get(
+  "/hub-admin/get-all",
+  checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
+  AdminController.getAllHubAdmins,
+);
+
 export const AdminRoutes = router;

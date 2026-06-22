@@ -13,6 +13,8 @@ import { Parcel } from "../parcels/parcel.model";
 import { Role } from "../user/user.interface";
 import { User } from "../user/user.model";
 import { HubAdmin } from "./admin.model";
+import { Hub } from "../hub/hub.model";
+import { QueryBuilder } from "../../utils/queryBuilder";
 
 const updateCompanyStatus = async (id: string, status: CompanyStatus) => {
   const updatedCompany = await Company.findByIdAndUpdate(
@@ -201,6 +203,7 @@ const makeHubAdminService = async (
   session.startTransaction();
 
   try {
+    // Change User role
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       {
@@ -213,6 +216,7 @@ const makeHubAdminService = async (
       throw new AppError(httpStatus.NOT_FOUND, "User not found!");
     }
 
+    // Check and add hub admin to HubAdmin collection
     const isHubAdminExist = await HubAdmin.findOne({
       userId: updatedUser._id,
     }).session(session);
@@ -234,6 +238,15 @@ const makeHubAdminService = async (
       { session },
     );
 
+    // Add hub admin id to hub collection
+    await Hub.findByIdAndUpdate(
+      payload.hubId,
+      {
+        $addToSet: { hubAdminId: newHubAdmin._id },
+      },
+      { session },
+    );
+
     await session.commitTransaction();
 
     return { user: updatedUser, hubAdmin: newHubAdmin };
@@ -245,11 +258,30 @@ const makeHubAdminService = async (
   }
 };
 
+const getAllHubAdminsService = async (query: Record<string, string>) => {
+  const queryBuilder = new QueryBuilder(HubAdmin.find(), query);
+
+  const hubAdmins = await queryBuilder
+    .filter()
+    .search(["name"])
+    .sort()
+    .fields()
+    .paginate();
+
+  const [data, meta] = await Promise.all([
+    hubAdmins.build(),
+    hubAdmins.getMeta()
+  ])
+
+  return { data, meta };
+}
+
 const deleteHubAdminService = async (userId: string) => {
   const session = await User.startSession();
   session.startTransaction();
 
   try {
+    
     const deletedHubAdmin = await HubAdmin.findOneAndDelete(
       { userId },
       { session },
@@ -259,13 +291,21 @@ const deleteHubAdminService = async (userId: string) => {
       throw new AppError(httpStatus.NOT_FOUND, "Hub admin not found!");
     }
 
+    await Hub.findByIdAndUpdate(
+      deletedHubAdmin.hubId,
+      {
+        $pull: { hubAdminId: deletedHubAdmin._id },
+      },
+      { session },
+    );
+
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       {
         $pull: { role: Role.HUB_ADMIN },
       },
-      { runValidators: true, returnDocument: "after" },
-    ).session(session);
+      { session, runValidators: true, returnDocument: "after" },
+    );
 
     if (!updatedUser) {
       throw new AppError(httpStatus.NOT_FOUND, "User not found!");
@@ -290,5 +330,6 @@ export const AdminServices = {
   assignPickupHubToParcelService,
   assignDeliveryHubToParcelService,
   makeHubAdminService,
-  deleteHubAdminService
+  deleteHubAdminService,
+  getAllHubAdminsService
 };

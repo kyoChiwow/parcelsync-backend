@@ -18,12 +18,15 @@ router.get(
   checkAuth(Role.SUPER_ADMIN, Role.ADMIN),
   UserController.getHubAdmins,
 );
+
 router.get(
   "/get-all",
   checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
   UserController.getAllUsers,
 );
+
 router.get("/get-me", checkAuth(...Object.values(Role)), UserController.getMe);
+
 router.get(
   "/:id",
   checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
